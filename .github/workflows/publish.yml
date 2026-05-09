@@ -262,7 +262,9 @@ jobs:
           node-version: "22"
           registry-url: https://registry.npmjs.org/
       - name: Install npm with trusted publishing support
-        run: npm install -g npm@latest
+        # Pin npm and use --force to dodge the recurring self-update bug
+        # ("Cannot find module 'promise-retry'") that breaks `npm@latest`.
+        run: npm install -g --force npm@11.5.1
       - name: Download binaries
         uses: actions/download-artifact@v8
         with:
