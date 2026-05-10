@@ -1,6 +1,6 @@
 # tree-sitter-postgres justfile
 
-version := "1.0.0"
+version := "1.1.6"
 language_name := "tree-sitter-postgres"
 ts := "./node_modules/.bin/tree-sitter"
 
@@ -50,17 +50,18 @@ clean:
 bump new_version:
     #!/usr/bin/env bash
     set -euo pipefail
-    old="{{version}}"
     new="{{new_version}}"
-    echo "Bumping version: $old → $new"
-    sed -i '' "s/^version := \"$old\"/version := \"$new\"/" justfile
-    sed -i '' "s/\"version\": \"$old\"/\"version\": \"$new\"/" package.json
-    sed -i '' "s/^version = \"$old\"/version = \"$new\"/" Cargo.toml
-    sed -i '' "s/^version = \"$old\"/version = \"$new\"/" pyproject.toml
-    sed -i '' "s/\"version\": \"$old\"/\"version\": \"$new\"/" tree-sitter.json
+    re='[0-9]+\.[0-9]+\.[0-9]+'
+    echo "Bumping version to: $new"
+    sed -i '' -E "s/^version := \"${re}\"/version := \"${new}\"/" justfile
+    sed -i '' -E "1,10s/\"version\": \"${re}\"/\"version\": \"${new}\"/" package.json
+    sed -i '' -E "1,15s/\"version\": \"${re}\"/\"version\": \"${new}\"/g" package-lock.json
+    sed -i '' -E "s/^version = \"${re}\"/version = \"${new}\"/" Cargo.toml
+    sed -i '' -E "s/^version = \"${re}\"/version = \"${new}\"/" pyproject.toml
+    sed -i '' -E "1,10s/\"version\": \"${re}\"/\"version\": \"${new}\"/" tree-sitter.json
     # Cargo.lock is updated by cargo
     cargo update --workspace
-    echo "Updated: justfile, package.json, Cargo.toml, pyproject.toml, tree-sitter.json, Cargo.lock"
+    echo "Updated: justfile, package.json, package-lock.json, Cargo.toml, pyproject.toml, tree-sitter.json, Cargo.lock"
 
 # Publish dry run (all registries)
 publish-dry-run:
