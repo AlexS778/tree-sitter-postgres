@@ -52,7 +52,7 @@
   (SimpleTypename
     (GenericType
       (type_function_name
-        (identifier) @type) .
+        (identifier) @type)
       (opt_type_modifiers))))
 
 (Typename
